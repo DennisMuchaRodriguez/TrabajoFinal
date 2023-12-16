@@ -1,25 +1,55 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 public class Puntaje : MonoBehaviour
 {
 
-    private float Scores;
-    private TextMeshProUGUI textMesh;
+    public float Scores;
+    public int currentLevel;
+    public int maxLevelUnlocked;
+    public Text textExample;
+  
+    void Awake()
+    {
+       
+    }
     void Start()
     {
-        textMesh = GetComponent<TextMeshProUGUI>();
+        currentLevel = PlayerPrefs.GetInt("CurrentLevel", 1);
+        maxLevelUnlocked = PlayerPrefs.GetInt("MaxLevelUnlock", 1);   
     }
-
-    // Update is called once per frame
     void Update()
     {
-        
-        textMesh.text = Scores.ToString("0");
+        if (Scores > 99)
+        {
+            Win();
+
+        }
     }
-    public void SumaPuntos(float puntosEntrada)
+    public void SumaPuntos(float ScoreFood)
     {
-        Scores = Scores + puntosEntrada;
+        Scores = Scores + ScoreFood;
+        textExample.text = Scores.ToString("0");
+       
+    }
+   
+    
+
+
+    
+    public void Win()
+    {
+        if (currentLevel >= maxLevelUnlocked)
+        {
+            PlayerPrefs.SetInt("MaxLevelUnlock", currentLevel + 1);
+
+        }
+        SceneManager.LoadScene("Victory");
+    }
+    public void reset()
+    {
+        PlayerPrefs.DeleteAll();
     }
 }

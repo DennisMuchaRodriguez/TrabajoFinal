@@ -6,7 +6,8 @@ public class Player : MonoBehaviour
 {
     private Rigidbody2D _compRigidbody2D;
     private Transform _compTransform;
-    public int Life;
+    private SpriteRenderer _compSpriteRenderer;
+   
     public int Score;
     public float speedX;
     public int directionX;
@@ -15,33 +16,45 @@ public class Player : MonoBehaviour
     private float newTeleportXPosition1 = -21.30f;
     private float teleportXPosition2 = -22.8f;
     private float newTeleportXPosition2 = 21.30f;
+    private Animator _compAnimator;
+    public LifeController Controller;
+    public MusicController musicController;
+    public static Player operator ++(Player a)
+    {
+        a.speedX = a.speedX + 3;
+        return a;
+    }
     void Awake()
     {
         _compRigidbody2D = GetComponent<Rigidbody2D>();
         _compTransform = GetComponent<Transform>();
+        _compAnimator = GetComponent<Animator>();
+        _compSpriteRenderer = GetComponent<SpriteRenderer>();
     }
     void Start()
     {
-      
+        
     }
     void Update()
     {
         _compTransform.position = new Vector2(_compTransform.position.x + speedX * directionX * Time.deltaTime, _compTransform.position.y);
-        
+
         if (Input.GetKey(KeyCode.D))
         {
             directionX = 1;
+            _compSpriteRenderer.flipX = false;
         }
         else if (Input.GetKey(KeyCode.A))
         {
             directionX = -1;
+            _compSpriteRenderer.flipX = true;
         }
         else
         {
             directionX = 0;
         }
-        
-        if(_compTransform.position.x > teleportXPosition1)
+
+        if (_compTransform.position.x > teleportXPosition1)
         {
             _compTransform.position = new Vector2(newTeleportXPosition1, _compTransform.position.y);
         }
@@ -49,20 +62,14 @@ public class Player : MonoBehaviour
         {
             _compTransform.position = new Vector2(newTeleportXPosition2, _compTransform.position.y);
         }
-    }
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.gameObject.tag == "FoodBad")
-        {
-            Life = Life - 1;
-            speedX = speedX - 2;
-        }
-        if (other.gameObject.tag == "Food")
-        {
-            Score = Score + 1;
-        }
-    }
+        _compAnimator.SetInteger("isWalking", directionX);
 
-   
-    
+
+       
+        Controller.Vidas();
+    }
+     
+
+
+
 }
